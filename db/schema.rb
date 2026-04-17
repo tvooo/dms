@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_16_183705) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_17_191540) do
   create_table "documents", force: :cascade do |t|
     t.string "content_hash"
     t.datetime "created_at", null: false
     t.integer "file_size"
     t.datetime "indexed_at"
     t.string "mime_type"
+    t.datetime "mtime"
     t.string "path", null: false
     t.integer "status", default: 0, null: false
     t.text "text_content"
