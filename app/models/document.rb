@@ -8,4 +8,12 @@ class Document < ApplicationRecord
   def filename
     File.basename(path)
   end
+
+  def thumbnail_path
+    Rails.root.join("storage/thumbnails/#{content_hash}.webp")
+  end
+
+  def thumbnail?
+    content_hash.present? && File.exist?(thumbnail_path)
+  end
 end

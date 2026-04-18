@@ -41,6 +41,14 @@
         <div class="text-xs text-gray-500 mt-1"><%= @selected_document.mime_type %></div>
       </div>
 
+      <% if @selected_document.thumbnail? %>
+        <div class="mb-4 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
+          <%= image_tag thumbnail_document_path(@selected_document),
+                class: "max-w-full h-auto",
+                alt: @selected_document.filename %>
+        </div>
+      <% end %>
+
       <dl class="text-sm space-y-2 border-t border-gray-200 pt-4">
         <div class="flex justify-between gap-4">
           <dt class="text-gray-500">Size</dt>

@@ -44,7 +44,7 @@ class InitialScanJob < ApplicationJob
       mtime: mtime,
       status: :pending,
     )
-    IndexDocumentJob.perform_later(doc.id)
+    enqueue_processing(doc)
   end
 
   def refresh_and_maybe_enqueue(doc, path, mtime)
@@ -60,7 +60,12 @@ class InitialScanJob < ApplicationJob
         mtime: mtime,
         status: :pending,
       )
-      IndexDocumentJob.perform_later(doc.id)
+      enqueue_processing(doc)
     end
+  end
+
+  def enqueue_processing(doc)
+    IndexDocumentJob.perform_later(doc.id)
+    GenerateThumbnailJob.perform_later(doc.id)
   end
 end
