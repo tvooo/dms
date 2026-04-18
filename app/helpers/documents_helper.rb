@@ -1,4 +1,16 @@
 module DocumentsHelper
+  THUMBNAIL_PLACEHOLDER = {
+    "pending"     => "Thumbnail queued…",
+    "processing"  => "Generating thumbnail…",
+    "error"       => "Thumbnail generation failed",
+    "unsupported" => "No preview available for this file type",
+    "done"        => "Thumbnail file missing",
+  }.freeze
+
+  def thumbnail_placeholder_text(document)
+    THUMBNAIL_PLACEHOLDER.fetch(document.thumbnail_status.to_s, document.thumbnail_status.to_s)
+  end
+
   def relative_document_path(document, root = Rails.application.config.dms_root)
     Pathname.new(document.path).relative_path_from(Pathname.new(root.to_s)).to_s
   rescue ArgumentError

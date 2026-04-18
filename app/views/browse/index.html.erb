@@ -47,6 +47,10 @@
                 class: "max-w-full h-auto",
                 alt: @selected_document.filename %>
         </div>
+      <% else %>
+        <div class="mb-4 bg-gray-100 rounded p-6 text-center text-xs text-gray-500">
+          <%= thumbnail_placeholder_text(@selected_document) %>
+        </div>
       <% end %>
 
       <dl class="text-sm space-y-2 border-t border-gray-200 pt-4">
@@ -55,8 +59,12 @@
           <dd><%= number_to_human_size(@selected_document.file_size) %></dd>
         </div>
         <div class="flex justify-between gap-4">
-          <dt class="text-gray-500">Status</dt>
+          <dt class="text-gray-500">Indexing</dt>
           <dd><%= @selected_document.status %></dd>
+        </div>
+        <div class="flex justify-between gap-4">
+          <dt class="text-gray-500">Thumbnail</dt>
+          <dd><%= @selected_document.thumbnail_status %></dd>
         </div>
         <div class="flex justify-between gap-4">
           <dt class="text-gray-500">Modified</dt>

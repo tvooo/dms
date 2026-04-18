@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_17_191540) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_18_052942) do
   create_table "documents", force: :cascade do |t|
     t.string "content_hash"
     t.datetime "created_at", null: false
@@ -21,9 +21,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_191540) do
     t.string "path", null: false
     t.integer "status", default: 0, null: false
     t.text "text_content"
+    t.integer "thumbnail_status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["content_hash"], name: "index_documents_on_content_hash"
     t.index ["path"], name: "index_documents_on_path", unique: true
     t.index ["status"], name: "index_documents_on_status"
+    t.index ["thumbnail_status"], name: "index_documents_on_thumbnail_status"
   end
 end

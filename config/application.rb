@@ -39,6 +39,16 @@ module Dms
     # Don't generate system test files.
     config.generators.system_tests = nil
 
+    # Route background jobs through Solid Queue (the default in Rails 8). The
+    # async adapter runs jobs in-process, so enqueues from short-lived
+    # processes (e.g. rake tasks) are lost when the process exits.
+    config.active_job.queue_adapter = :solid_queue
+
+    # Solid Queue's tables live in a separate `queue` database (see
+    # config/database.yml). This connects SolidQueue::Record to that db so
+    # job churn doesn't contend with the primary db.
+    config.solid_queue.connects_to = { database: { writing: :queue } }
+
     # Root directory the DMS indexes. Points at an existing folder of files —
     # the app reads from it, never writes to it. Override with DMS_ROOT.
     config.dms_root = Pathname.new(ENV.fetch("DMS_ROOT", Rails.root.join("documents")))

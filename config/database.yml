@@ -1,31 +1,44 @@
 # SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
 #
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
-#
+# Primary DB holds app data (documents, future tags, FTS tables).
+# Queue DB holds Solid Queue's job tables — kept separate so heavy job churn
+# (polling, claims, retries) doesn't bloat or contend with the primary DB.
+# Schema for the queue DB lives in db/queue_schema.rb.
+
 default: &default
   adapter: sqlite3
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 
 development:
-  <<: *default
-  database: storage/development.sqlite3
+  primary:
+    <<: *default
+    database: storage/development.sqlite3
+  queue:
+    <<: *default
+    database: storage/development_queue.sqlite3
+    migrations_paths: db/queue_migrate
+    schema_dump: queue_schema.rb
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: storage/test.sqlite3
+  primary:
+    <<: *default
+    database: storage/test.sqlite3
+  queue:
+    <<: *default
+    database: storage/test_queue.sqlite3
+    migrations_paths: db/queue_migrate
+    schema_dump: queue_schema.rb
 
-# SQLite3 write its data on the local filesystem, as such it requires
-# persistent disks. If you are deploying to a managed service, you should
-# make sure it provides disk persistence, as many don't.
-#
-# Similarly, if you deploy your application as a Docker container, you must
-# ensure the database is located in a persisted volume.
+# SQLite3 writes its data on the local filesystem, as such it requires
+# persistent disks. If you are deploying as a Docker container, mount a
+# volume at /app/storage so both databases survive restarts.
 production:
-  <<: *default
-  # database: path/to/persistent/storage/production.sqlite3
+  primary:
+    <<: *default
+    # database: path/to/persistent/storage/production.sqlite3
+  queue:
+    <<: *default
+    # database: path/to/persistent/storage/production_queue.sqlite3
+    migrations_paths: db/queue_migrate
+    schema_dump: queue_schema.rb

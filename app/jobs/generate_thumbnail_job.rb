@@ -11,10 +11,11 @@ class GenerateThumbnailJob < ApplicationJob
     dest = doc.thumbnail_path.to_s
 
     if File.exist?(dest)
-      Rails.logger.info "GenerateThumbnailJob: ##{doc.id} already has thumbnail at #{dest}"
+      doc.update!(thumbnail_status: :done) unless doc.thumbnail_status_done?
       return
     end
 
+    doc.update!(thumbnail_status: :processing)
     FileUtils.mkdir_p(File.dirname(dest))
 
     case
@@ -23,11 +24,17 @@ class GenerateThumbnailJob < ApplicationJob
     when doc.mime_type.to_s.start_with?("image/")
       generate_image_thumbnail(doc, dest)
     else
+      doc.update!(thumbnail_status: :unsupported)
       Rails.logger.info "GenerateThumbnailJob: skipping ##{doc.id} — unsupported MIME #{doc.mime_type}"
       return
     end
 
+    doc.update!(thumbnail_status: :done)
     Rails.logger.info "GenerateThumbnailJob: wrote #{dest}"
+  rescue => e
+    doc&.update(thumbnail_status: :error)
+    Rails.logger.error "GenerateThumbnailJob: ##{document_id} failed: #{e.class}: #{e.message}"
+    raise
   end
 
   private

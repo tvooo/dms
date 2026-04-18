@@ -1,5 +1,6 @@
 class Document < ApplicationRecord
-  enum :status, { pending: 0, processing: 1, done: 2, error: 3 }
+  enum :status, { pending: 0, processing: 1, done: 2, error: 3 }, prefix: :index
+  enum :thumbnail_status, { pending: 0, processing: 1, done: 2, error: 3, unsupported: 4 }, prefix: true
 
   validates :path, presence: true, uniqueness: true
 
