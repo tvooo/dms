@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_18_052942) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_18_070905) do
+  create_table "document_tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "document_id", null: false
+    t.integer "tag_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["document_id", "tag_id"], name: "index_document_tags_on_document_id_and_tag_id", unique: true
+    t.index ["document_id"], name: "index_document_tags_on_document_id"
+    t.index ["tag_id"], name: "index_document_tags_on_tag_id"
+  end
+
   create_table "documents", force: :cascade do |t|
     t.string "content_hash"
     t.datetime "created_at", null: false
@@ -28,4 +38,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_18_052942) do
     t.index ["status"], name: "index_documents_on_status"
     t.index ["thumbnail_status"], name: "index_documents_on_thumbnail_status"
   end
+
+  create_table "tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.integer "parent_id"
+    t.datetime "updated_at", null: false
+    t.index "LOWER(name), parent_id", name: "index_tags_on_lower_name_and_parent", unique: true
+    t.index ["parent_id"], name: "index_tags_on_parent_id"
+  end
+
+  add_foreign_key "document_tags", "documents"
+  add_foreign_key "document_tags", "tags"
+  add_foreign_key "tags", "tags", column: "parent_id"
 end

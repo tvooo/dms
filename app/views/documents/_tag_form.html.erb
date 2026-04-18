@@ -1,0 +1,11 @@
+<%= form_with model: document, url: document_path(document), method: :patch, local: true, class: "space-y-2" do |f| %>
+  <%= f.label :tag_list, "Tags", class: "block text-xs font-medium uppercase tracking-wide text-gray-500" %>
+  <%= f.text_field :tag_list,
+        value: document.tag_list,
+        placeholder: "Employment/Uber Contract",
+        class: "w-full font-mono text-xs px-2 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500" %>
+  <div class="flex items-center justify-between">
+    <p class="text-xs text-gray-400">Space-separated. Use <code>/</code> for nesting.</p>
+    <%= f.submit "Save", class: "text-xs px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+  </div>
+<% end %>

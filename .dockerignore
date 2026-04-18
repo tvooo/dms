@@ -1,0 +1,26 @@
+.git
+.gitignore
+.gitattributes
+
+# Build artefacts and runtime state — never bake into the image.
+/log/*
+/tmp/*
+/storage/*
+/app/assets/builds/*
+/public/assets
+
+# Local env
+.env*
+
+# Editor scratch
+.DS_Store
+.idea
+.vscode
+
+# Docs that don't need to ship to prod
+README.md
+CLAUDE.md
+
+# The Dockerfile itself
+Dockerfile
+.dockerignore

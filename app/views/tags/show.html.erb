@@ -1,27 +1,42 @@
-<% content_for :title, "Browse" %>
+<% content_for :title, @tag.full_path %>
 
 <div class="flex h-full">
   <aside class="w-64 shrink-0 border-r border-gray-200 overflow-auto p-4">
-    <h2 class="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">Folders</h2>
-    <% if @tree.empty? %>
-      <p class="text-sm text-gray-400">No folders yet.</p>
-    <% else %>
-      <%= render "folder_tree", tree: @tree, prefix: "" %>
-    <% end %>
+    <h2 class="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">Tags</h2>
+    <%= render "tags/tag_tree", tags: @roots %>
   </aside>
 
   <section class="flex-1 min-w-0 border-r border-gray-200 overflow-auto p-4">
     <h2 class="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">
-      <%= @current_folder.presence || "Root" %>
+      <%= @tag.full_path %>
     </h2>
-    <% if @folder_documents.empty? %>
-      <p class="text-sm text-gray-400">No files in this folder.</p>
+
+    <% if @children.any? %>
+      <div class="mb-4">
+        <h3 class="text-xs font-medium uppercase tracking-wide text-gray-400 mb-2">Subtags</h3>
+        <ul class="space-y-1">
+          <% @children.each do |child| %>
+            <li>
+              <%= link_to tag_path(child),
+                    class: "flex items-center gap-2 px-2 py-1.5 rounded text-sm hover:bg-gray-100" do %>
+                <%= lucide_icon :tag, css_class: "w-4 h-4 text-gray-400" %>
+                <span class="truncate"><%= child.name %></span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <h3 class="text-xs font-medium uppercase tracking-wide text-gray-400 mb-2">Documents</h3>
+    <% if @documents.empty? %>
+      <p class="text-sm text-gray-400">No documents tagged <code><%= @tag.full_path %></code>.</p>
     <% else %>
       <ul class="space-y-1">
-        <% @folder_documents.each do |doc| %>
+        <% @documents.each do |doc| %>
           <% selected = doc.id == @selected_document&.id %>
           <li>
-            <%= link_to browse_path(folder: @current_folder, document: doc.id),
+            <%= link_to tag_path(@tag, document: doc.id),
                   class: "flex items-center gap-2 px-2 py-1.5 rounded text-sm #{selected ? 'bg-blue-100 text-blue-900' : 'hover:bg-gray-100'}" do %>
               <%= lucide_icon :file, css_class: "w-4 h-4 text-gray-400" %>
               <span class="truncate font-mono"><%= doc.filename %></span>
@@ -57,14 +72,6 @@
         <div class="flex justify-between gap-4">
           <dt class="text-gray-500">Size</dt>
           <dd><%= number_to_human_size(@selected_document.file_size) %></dd>
-        </div>
-        <div class="flex justify-between gap-4">
-          <dt class="text-gray-500">Indexing</dt>
-          <dd><%= @selected_document.status %></dd>
-        </div>
-        <div class="flex justify-between gap-4">
-          <dt class="text-gray-500">Thumbnail</dt>
-          <dd><%= @selected_document.thumbnail_status %></dd>
         </div>
         <div class="flex justify-between gap-4">
           <dt class="text-gray-500">Modified</dt>

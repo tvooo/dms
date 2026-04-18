@@ -1,0 +1,21 @@
+<ul class="space-y-1">
+  <% tags.each do |tag| %>
+    <% active = @tag&.id == tag.id %>
+    <li>
+      <%= link_to tag_path(tag),
+            class: "flex items-center gap-2 px-2 py-1.5 rounded text-sm #{active ? 'bg-blue-100 text-blue-900' : 'hover:bg-gray-100'}" do %>
+        <%= lucide_icon :tag, css_class: "w-4 h-4 text-gray-400" %>
+        <span class="truncate"><%= tag.name %></span>
+        <% if @counts && (count = @counts[tag.id]) %>
+          <span class="ml-auto text-xs text-gray-400"><%= count %></span>
+        <% end %>
+      <% end %>
+      <% children = tag.children.sort_by(&:name) %>
+      <% if children.any? %>
+        <div class="pl-4 mt-1">
+          <%= render "tags/tag_tree", tags: children %>
+        </div>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

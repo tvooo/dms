@@ -1,0 +1,34 @@
+services:
+  web:
+    build: .
+    env_file: .env
+    environment:
+      RAILS_ENV: production
+      DMS_ROOT: /data
+      # Set FORCE_SSL=1 once you put this behind a TLS-terminating proxy.
+      FORCE_SSL: "0"
+    ports:
+      - "3000:3000"
+    volumes:
+      - storage:/app/storage
+      - "${DMS_DOCS_PATH}:/data:ro"
+    # Run pending migrations on boot; idempotent.
+    command: ["bash", "-c", "bin/rails db:prepare && exec bin/rails server -b 0.0.0.0"]
+    restart: unless-stopped
+
+  jobs:
+    build: .
+    env_file: .env
+    environment:
+      RAILS_ENV: production
+      DMS_ROOT: /data
+    volumes:
+      - storage:/app/storage
+      - "${DMS_DOCS_PATH}:/data:ro"
+    command: ["bin/jobs"]
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  storage:

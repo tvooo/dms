@@ -23,6 +23,13 @@
         <%= nav_link "Tags",   tags_path,   icon: :tag %>
       </nav>
 
+      <div class="px-4 py-1 text-xs text-gray-600">
+        <div>Tools</div>
+      </div>
+      <nav class="flex-0 p-2 space-y-1">
+        <%= nav_link "Duplicates",   "/duplicates",   icon: :house %>
+      </nav>
+
       <div class="px-4 py-3 border-t border-gray-200 text-xs text-gray-600">
         <div><%= pluralize(Document.count, "document") %> indexed</div>
       </div>

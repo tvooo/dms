@@ -49,6 +49,11 @@ module Dms
     # job churn doesn't contend with the primary db.
     config.solid_queue.connects_to = { database: { writing: :queue } }
 
+    # Mission Control::Jobs ships with HTTP Basic auth enabled by default; the
+    # dashboard is mounted at /jobs. For a personal DMS accessed on a trusted
+    # LAN (or behind a proxy that handles auth), we turn it off.
+    config.mission_control.jobs.http_basic_auth_enabled = false
+
     # Root directory the DMS indexes. Points at an existing folder of files —
     # the app reads from it, never writes to it. Override with DMS_ROOT.
     config.dms_root = Pathname.new(ENV.fetch("DMS_ROOT", Rails.root.join("documents")))
