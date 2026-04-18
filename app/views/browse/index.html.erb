@@ -1,0 +1,64 @@
+<% content_for :title, "Browse" %>
+
+<div class="flex h-full">
+  <aside class="w-64 shrink-0 border-r border-gray-200 overflow-auto p-4">
+    <h2 class="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">Folders</h2>
+    <% if @tree.empty? %>
+      <p class="text-sm text-gray-400">No folders yet.</p>
+    <% else %>
+      <%= render "folder_tree", tree: @tree, prefix: "" %>
+    <% end %>
+  </aside>
+
+  <section class="flex-1 min-w-0 border-r border-gray-200 overflow-auto p-4">
+    <h2 class="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">
+      <%= @current_folder.presence || "Root" %>
+    </h2>
+    <% if @folder_documents.empty? %>
+      <p class="text-sm text-gray-400">No files in this folder.</p>
+    <% else %>
+      <ul class="space-y-1">
+        <% @folder_documents.each do |doc| %>
+          <% selected = doc.id == @selected_document&.id %>
+          <li>
+            <%= link_to browse_path(folder: @current_folder, document: doc.id),
+                  class: "flex items-center gap-2 px-2 py-1.5 rounded text-sm #{selected ? 'bg-blue-100 text-blue-900' : 'hover:bg-gray-100'}" do %>
+              <%= lucide_icon :file, css_class: "w-4 h-4 text-gray-400" %>
+              <span class="truncate font-mono"><%= doc.filename %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </section>
+
+  <% if @selected_document %>
+    <section class="w-96 shrink-0 overflow-auto p-4">
+      <h2 class="text-xs font-medium uppercase tracking-wide text-gray-500 mb-3">Preview</h2>
+
+      <div class="mb-4">
+        <div class="font-mono text-sm break-all"><%= @selected_document.filename %></div>
+        <div class="text-xs text-gray-500 mt-1"><%= @selected_document.mime_type %></div>
+      </div>
+
+      <dl class="text-sm space-y-2 border-t border-gray-200 pt-4">
+        <div class="flex justify-between gap-4">
+          <dt class="text-gray-500">Size</dt>
+          <dd><%= number_to_human_size(@selected_document.file_size) %></dd>
+        </div>
+        <div class="flex justify-between gap-4">
+          <dt class="text-gray-500">Status</dt>
+          <dd><%= @selected_document.status %></dd>
+        </div>
+        <div class="flex justify-between gap-4">
+          <dt class="text-gray-500">Modified</dt>
+          <dd><%= @selected_document.mtime&.to_formatted_s(:short) %></dd>
+        </div>
+        <div>
+          <dt class="text-gray-500 mb-1">Path</dt>
+          <dd class="font-mono text-xs break-all text-gray-700"><%= @selected_document.path %></dd>
+        </div>
+      </dl>
+    </section>
+  <% end %>
+</div>

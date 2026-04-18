@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html class="h-full">
   <head>
-    <title><%= content_for(:title) || "DMS" %></title>
+    <title><%= content_for?(:title) ? "#{content_for(:title)} · DMS" : "DMS" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -11,8 +11,24 @@
     <%= stylesheet_link_tag :app %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="h-full flex bg-white text-gray-900">
+    <aside class="w-56 shrink-0 border-r border-gray-200 bg-gray-50 flex flex-col">
+      <div class="px-4 py-5 border-b border-gray-200">
+        <h1 class="font-semibold tracking-tight">DMS</h1>
+      </div>
+
+      <nav class="flex-1 p-2 space-y-1">
+        <%= nav_link "Home",   root_path,   icon: :house %>
+        <%= nav_link "Browse", browse_path, icon: :folder_tree %>
+        <%= nav_link "Tags",   tags_path,   icon: :tag %>
+      </nav>
+
+      <div class="px-4 py-3 border-t border-gray-200 text-xs text-gray-600">
+        <div><%= pluralize(Document.count, "document") %> indexed</div>
+      </div>
+    </aside>
+
+    <main class="flex-1 min-w-0 overflow-auto">
       <%= yield %>
     </main>
   </body>
