@@ -21,6 +21,7 @@ RUN apt-get update -qq && \
       tzdata \
       sqlite3 \
       libsqlite3-dev \
+      libyaml-dev \
       poppler-utils \
       libvips \
       tesseract-ocr \

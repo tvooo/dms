@@ -30,12 +30,19 @@
         <%= nav_link "Duplicates",   "/duplicates",   icon: :house %>
       </nav>
 
-      <div class="px-4 py-3 border-t border-gray-200 text-xs text-gray-600">
+      <div class="px-4 py-3 border-t border-gray-200 text-xs text-gray-600 space-y-2">
         <div><%= pluralize(Document.count, "document") %> indexed</div>
+        <%= button_to "Scan now", scans_path,
+              class: "w-full text-xs px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-gray-800" %>
       </div>
     </aside>
 
     <main class="flex-1 min-w-0 overflow-auto">
+      <% if flash.any? %>
+        <div class="px-6 py-2 text-sm bg-blue-50 border-b border-blue-100 text-blue-900">
+          <%= flash[:notice] || flash[:alert] %>
+        </div>
+      <% end %>
       <%= yield %>
     </main>
   </body>
