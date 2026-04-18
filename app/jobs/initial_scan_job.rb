@@ -17,6 +17,7 @@ class InitialScanJob < ApplicationJob
     Find.find(root.to_s) do |path|
       next if File.directory?(path)
       next if File.basename(path).start_with?(".")
+      next if File.dirname(path).split(File::SEPARATOR).any? { |part| part.start_with?(".") || part == "@eaDir" }
 
       sync_path(path)
     end
@@ -27,6 +28,11 @@ class InitialScanJob < ApplicationJob
   def sync_path(path)
     mtime = File.mtime(path)
     doc   = Document.find_by(path: path)
+
+    unless Marcel::MimeType.for(Pathname.new(path)).start_with?("application/pdf", "image/")
+      Rails.logger.info "InitialScanJob: skipping unsupported file #{path}"
+      return
+    end
 
     if doc.nil?
       create_and_enqueue(path, mtime)
